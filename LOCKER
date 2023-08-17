@@ -3,7 +3,7 @@
 
 #include <exception>
 #include <pthread.h>
-#include <semaphore.h>
+#include <semaphore.h>//<semaphore.h> 标头定义 sem_t 类型，用于执行信号量操作。
 
 class sem
 {
@@ -11,7 +11,11 @@ public:
     sem()
     {
         if (sem_init(&m_sem, 0, 0) != 0)//int sem_init(sem_t *sem, int pshared, unsigned int value),
-        {
+        pshared：用于指定信号量的共享类型。可以是以下两个值之一：
+        0：信号量在进程间不共享，仅在同一进程内的线程间共享。
+        1：信号量在进程间共享，可以在不同进程之间的线程间共享。
+        value：信号量的初始值，表示可以同时访问的资源数量。通常用于表示可用资源的数量。//
+{
             throw std::exception();
         }
     }
@@ -28,11 +32,13 @@ public:
     }
     bool wait()
     {
-        return sem_wait(&m_sem) == 0;
+        return sem_wait(&m_sem) == 0;//这个函数执行等待操作。它调用 sem_wait 函数来等待信号量 m_sem。
+如果信号量的值大于 0，它将其减 1 并返回 true，表示成功获取资源。如果信号量的值为 0，线程将被阻塞等待，并返回 false。
     }
     bool post()
     {
-        return sem_post(&m_sem) == 0;
+        return sem_post(&m_sem) == 0;//这个函数执行释放操作。它调用 sem_post 函数来增加信号量 m_sem 的值(+1)，并返回 true 表示成功。
+释放信号量可以唤醒等待的线程，使其可以继续执行。
     }
 
 private:
